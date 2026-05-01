@@ -1,1 +1,886 @@
 
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mini Mind Math Quiz – Fractions</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --red: #e63946;
+    --yellow: #f4a261;
+    --green: #2a9d8f;
+    --blue: #457b9d;
+    --dark: #1d3557;
+    --light: #f1faee;
+    --white: #ffffff;
+    --radius: 16px;
+    --shadow: 0 4px 20px rgba(29,53,87,0.13);
+  }
+
+- { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+font-family: ‘Nunito’, sans-serif;
+background: linear-gradient(135deg, #fdf6ec 0%, #e8f4fd 100%);
+min-height: 100vh;
+color: var(–dark);
+}
+
+/* ── SCREENS ── */
+.screen { display: none; }
+.screen.active { display: block; }
+
+/* ── HEADER ── */
+.brand-header {
+background: var(–dark);
+color: white;
+padding: 14px 28px;
+display: flex;
+align-items: center;
+gap: 14px;
+box-shadow: 0 3px 12px rgba(0,0,0,0.2);
+}
+.brand-header .logo-icon { font-size: 2rem; }
+.brand-header h1 {
+font-family: ‘Baloo 2’, cursive;
+font-size: 1.6rem;
+font-weight: 800;
+color: var(–yellow);
+line-height: 1;
+}
+.brand-header p { font-size: 0.78rem; color: #a8c8e8; letter-spacing: 1px; text-transform: uppercase; }
+
+/* ── INTRO SCREEN ── */
+#intro {
+max-width: 540px;
+margin: 60px auto;
+padding: 0 20px;
+text-align: center;
+}
+.intro-card {
+background: var(–white);
+border-radius: 24px;
+padding: 44px 36px;
+box-shadow: var(–shadow);
+border-top: 6px solid var(–red);
+}
+.intro-card .emoji-big { font-size: 3.5rem; margin-bottom: 10px; }
+.intro-card h2 {
+font-family: ‘Baloo 2’, cursive;
+font-size: 1.9rem;
+font-weight: 800;
+color: var(–dark);
+margin-bottom: 6px;
+}
+.intro-card .subtitle {
+color: var(–blue);
+font-weight: 600;
+margin-bottom: 28px;
+font-size: 0.95rem;
+}
+
+.info-pills {
+display: flex;
+gap: 10px;
+justify-content: center;
+flex-wrap: wrap;
+margin-bottom: 28px;
+}
+.pill {
+background: #f0f6ff;
+border: 2px solid #c8ddf5;
+border-radius: 50px;
+padding: 6px 18px;
+font-size: 0.85rem;
+font-weight: 700;
+color: var(–blue);
+display: flex;
+align-items: center;
+gap: 6px;
+}
+
+label.field-label {
+display: block;
+text-align: left;
+font-weight: 700;
+margin-bottom: 6px;
+font-size: 0.9rem;
+color: var(–dark);
+}
+input[type=“text”] {
+width: 100%;
+padding: 13px 16px;
+border: 2.5px solid #cce0f5;
+border-radius: 12px;
+font-family: ‘Nunito’, sans-serif;
+font-size: 1rem;
+color: var(–dark);
+outline: none;
+transition: border 0.2s;
+margin-bottom: 20px;
+}
+input[type=“text”]:focus { border-color: var(–blue); }
+
+.btn-start {
+background: linear-gradient(135deg, var(–red), #c1121f);
+color: white;
+border: none;
+padding: 15px 40px;
+border-radius: 50px;
+font-family: ‘Baloo 2’, cursive;
+font-size: 1.15rem;
+font-weight: 700;
+cursor: pointer;
+box-shadow: 0 6px 20px rgba(230,57,70,0.35);
+transition: transform 0.15s, box-shadow 0.15s;
+width: 100%;
+}
+.btn-start:hover { transform: translateY(-2px); box-shadow: 0 10px 26px rgba(230,57,70,0.4); }
+
+/* ── QUIZ SCREEN ── */
+#quiz { max-width: 700px; margin: 0 auto; padding: 30px 20px 60px; }
+
+.quiz-topbar {
+display: flex;
+align-items: center;
+justify-content: space-between;
+margin-bottom: 24px;
+flex-wrap: wrap;
+gap: 12px;
+}
+.student-tag {
+background: var(–dark);
+color: white;
+padding: 6px 16px;
+border-radius: 50px;
+font-size: 0.85rem;
+font-weight: 700;
+display: flex;
+align-items: center;
+gap: 6px;
+}
+.timer-box {
+background: white;
+border: 3px solid var(–red);
+border-radius: 12px;
+padding: 6px 18px;
+font-family: ‘Baloo 2’, cursive;
+font-size: 1.3rem;
+font-weight: 800;
+color: var(–red);
+display: flex;
+align-items: center;
+gap: 8px;
+min-width: 110px;
+justify-content: center;
+}
+.timer-box.warn { color: #c1121f; background: #fff0f0; animation: pulse 0.7s infinite; }
+@keyframes pulse { 0%,100%{transform:scale(1)} 50%{transform:scale(1.04)} }
+
+.progress-wrap { width: 100%; margin-bottom: 22px; }
+.progress-label {
+display: flex;
+justify-content: space-between;
+font-size: 0.82rem;
+font-weight: 700;
+color: var(–blue);
+margin-bottom: 6px;
+}
+.progress-bar-bg {
+background: #dce8f5;
+border-radius: 50px;
+height: 10px;
+overflow: hidden;
+}
+.progress-bar-fill {
+background: linear-gradient(90deg, var(–green), #52b788);
+height: 100%;
+border-radius: 50px;
+transition: width 0.4s ease;
+}
+
+.question-card {
+background: white;
+border-radius: var(–radius);
+padding: 30px 28px 26px;
+box-shadow: var(–shadow);
+border-left: 6px solid var(–yellow);
+margin-bottom: 22px;
+animation: slideIn 0.3s ease;
+}
+@keyframes slideIn { from{opacity:0;transform:translateY(12px)} to{opacity:1;transform:translateY(0)} }
+
+.q-meta {
+display: flex;
+align-items: center;
+gap: 8px;
+margin-bottom: 12px;
+}
+.q-number {
+background: var(–yellow);
+color: var(–dark);
+font-family: ‘Baloo 2’, cursive;
+font-weight: 800;
+font-size: 0.85rem;
+padding: 3px 12px;
+border-radius: 50px;
+}
+.q-category {
+color: #7a9fc5;
+font-size: 0.8rem;
+font-weight: 600;
+text-transform: uppercase;
+letter-spacing: 0.5px;
+}
+
+.q-text {
+font-size: 1.05rem;
+font-weight: 700;
+color: var(–dark);
+line-height: 1.5;
+margin-bottom: 20px;
+}
+
+.options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 11px; }
+@media(max-width:480px) { .options-grid { grid-template-columns: 1fr; } }
+
+.opt-btn {
+background: #f4f8ff;
+border: 2.5px solid #d0e4f7;
+border-radius: 12px;
+padding: 12px 16px;
+font-family: ‘Nunito’, sans-serif;
+font-size: 0.95rem;
+font-weight: 600;
+color: var(–dark);
+cursor: pointer;
+transition: all 0.18s;
+text-align: left;
+display: flex;
+align-items: center;
+gap: 10px;
+}
+.opt-btn:hover:not(:disabled) { border-color: var(–blue); background: #e8f2fc; transform: translateX(3px); }
+.opt-btn .opt-letter {
+width: 28px; height: 28px;
+border-radius: 50%;
+background: var(–blue);
+color: white;
+font-weight: 800;
+font-size: 0.8rem;
+display: flex; align-items: center; justify-content: center;
+flex-shrink: 0;
+}
+.opt-btn.correct { background: #d4f8ed; border-color: var(–green); color: #145a4e; }
+.opt-btn.correct .opt-letter { background: var(–green); }
+.opt-btn.wrong { background: #fde8ea; border-color: var(–red); color: #7a1a1e; }
+.opt-btn.wrong .opt-letter { background: var(–red); }
+.opt-btn:disabled { cursor: default; }
+
+.feedback-banner {
+margin-top: 14px;
+padding: 10px 16px;
+border-radius: 10px;
+font-weight: 700;
+font-size: 0.9rem;
+display: none;
+align-items: center;
+gap: 8px;
+}
+.feedback-banner.show { display: flex; }
+.feedback-banner.correct-fb { background: #d4f8ed; color: #145a4e; }
+.feedback-banner.wrong-fb { background: #fde8ea; color: #7a1a1e; }
+
+.nav-row {
+display: flex;
+justify-content: flex-end;
+margin-top: 18px;
+}
+.btn-next {
+background: linear-gradient(135deg, var(–blue), var(–dark));
+color: white;
+border: none;
+padding: 12px 32px;
+border-radius: 50px;
+font-family: ‘Baloo 2’, cursive;
+font-size: 1rem;
+font-weight: 700;
+cursor: pointer;
+display: flex;
+align-items: center;
+gap: 8px;
+box-shadow: 0 4px 14px rgba(29,53,87,0.25);
+transition: transform 0.15s;
+}
+.btn-next:hover { transform: translateY(-2px); }
+.btn-next:disabled { opacity: 0.4; cursor: default; }
+
+/* ── RESULT SCREEN ── */
+#result { max-width: 580px; margin: 50px auto; padding: 0 20px 80px; text-align: center; }
+
+.result-card {
+background: white;
+border-radius: 24px;
+padding: 44px 36px;
+box-shadow: var(–shadow);
+border-top: 8px solid var(–green);
+}
+.result-emoji { font-size: 4rem; margin-bottom: 10px; }
+.result-name {
+font-family: ‘Baloo 2’, cursive;
+font-size: 1.5rem;
+font-weight: 800;
+color: var(–dark);
+margin-bottom: 4px;
+}
+.result-sub { color: #7a9fc5; font-size: 0.9rem; margin-bottom: 24px; }
+
+.score-ring {
+width: 140px; height: 140px;
+margin: 0 auto 24px;
+position: relative;
+}
+.score-ring svg { transform: rotate(-90deg); }
+.score-ring circle { fill: none; stroke-width: 12; }
+.ring-bg { stroke: #e0eef8; }
+.ring-fill { stroke: var(–green); stroke-linecap: round; transition: stroke-dashoffset 1.2s ease; }
+.score-center {
+position: absolute;
+inset: 0;
+display: flex;
+flex-direction: column;
+align-items: center;
+justify-content: center;
+}
+.score-num {
+font-family: ‘Baloo 2’, cursive;
+font-size: 2rem;
+font-weight: 800;
+color: var(–dark);
+line-height: 1;
+}
+.score-denom { font-size: 0.85rem; color: #8aafcf; font-weight: 700; }
+
+.stat-row {
+display: grid;
+grid-template-columns: repeat(3, 1fr);
+gap: 14px;
+margin-bottom: 28px;
+}
+.stat-box {
+background: #f4f8ff;
+border-radius: 14px;
+padding: 14px 10px;
+display: flex;
+flex-direction: column;
+align-items: center;
+gap: 4px;
+}
+.stat-box .stat-icon { font-size: 1.4rem; }
+.stat-box .stat-val {
+font-family: ‘Baloo 2’, cursive;
+font-size: 1.3rem;
+font-weight: 800;
+color: var(–dark);
+}
+.stat-box .stat-lbl { font-size: 0.75rem; color: #7a9fc5; font-weight: 700; text-transform: uppercase; }
+
+.grade-badge {
+display: inline-block;
+padding: 8px 28px;
+border-radius: 50px;
+font-family: ‘Baloo 2’, cursive;
+font-size: 1.1rem;
+font-weight: 800;
+margin-bottom: 26px;
+}
+.grade-A { background: #d4f8ed; color: #145a4e; }
+.grade-B { background: #dce8f5; color: #1d3557; }
+.grade-C { background: #fff4d4; color: #7a5c00; }
+.grade-D { background: #fde8ea; color: #7a1a1e; }
+
+.btn-retry {
+background: linear-gradient(135deg, var(–red), #c1121f);
+color: white;
+border: none;
+padding: 14px 36px;
+border-radius: 50px;
+font-family: ‘Baloo 2’, cursive;
+font-size: 1.1rem;
+font-weight: 700;
+cursor: pointer;
+box-shadow: 0 6px 18px rgba(230,57,70,0.3);
+transition: transform 0.15s;
+width: 100%;
+}
+.btn-retry:hover { transform: translateY(-2px); }
+
+.answers-breakdown {
+margin-top: 30px;
+text-align: left;
+}
+.answers-breakdown h3 {
+font-family: ‘Baloo 2’, cursive;
+font-size: 1.1rem;
+margin-bottom: 14px;
+color: var(–dark);
+display: flex;
+align-items: center;
+gap: 8px;
+}
+.breakdown-item {
+display: flex;
+align-items: flex-start;
+gap: 10px;
+padding: 10px 14px;
+border-radius: 10px;
+margin-bottom: 8px;
+font-size: 0.88rem;
+font-weight: 600;
+}
+.breakdown-item.correct { background: #d4f8ed; color: #145a4e; }
+.breakdown-item.wrong { background: #fde8ea; color: #7a1a1e; }
+.breakdown-item .bi-icon { font-size: 1rem; flex-shrink: 0; margin-top: 1px; }
+
+/* confetti */
+.confetti-wrap {
+position: fixed; inset: 0; pointer-events: none; z-index: 999; overflow: hidden;
+}
+.confetti-piece {
+position: absolute;
+width: 10px; height: 10px;
+border-radius: 2px;
+animation: confettiFall linear forwards;
+}
+@keyframes confettiFall {
+0% { transform: translateY(-20px) rotate(0deg); opacity: 1; }
+100% { transform: translateY(110vh) rotate(720deg); opacity: 0; }
+}
+</style>
+
+</head>
+<body>
+
+<!-- HEADER -->
+
+<div class="brand-header">
+  <div class="logo-icon">🎓</div>
+  <div>
+    <h1>Mini Mind</h1>
+    <p>Home Tuition · Class IV · Math</p>
+  </div>
+</div>
+
+<!-- INTRO -->
+
+<div id="intro" class="screen active">
+  <div class="intro-card">
+    <div class="emoji-big">📐</div>
+    <h2>Fractions Quiz</h2>
+    <p class="subtitle">Class IV · Math · 20 Questions</p>
+
+```
+<div class="info-pills">
+  <div class="pill">❓ 20 Questions</div>
+  <div class="pill">⏱️ 15 Minutes</div>
+  <div class="pill">⭐ 20 Marks</div>
+</div>
+
+<label class="field-label">👤 Your Name</label>
+<input type="text" id="nameInput" placeholder="Enter your full name…">
+
+<button class="btn-start" onclick="startQuiz()">🚀 Start Quiz</button>
+```
+
+  </div>
+</div>
+
+<!-- QUIZ -->
+
+<div id="quiz" class="screen">
+  <div class="quiz-topbar">
+    <div class="student-tag">👤 <span id="studentName">Student</span></div>
+    <div class="timer-box" id="timerBox">⏱️ <span id="timer">15:00</span></div>
+  </div>
+
+  <div class="progress-wrap">
+    <div class="progress-label">
+      <span id="qLabel">Question 1 of 20</span>
+      <span id="scoreLabel">Score: 0</span>
+    </div>
+    <div class="progress-bar-bg">
+      <div class="progress-bar-fill" id="progressFill" style="width:0%"></div>
+    </div>
+  </div>
+
+  <div class="question-card" id="questionCard">
+    <div class="q-meta">
+      <span class="q-number" id="qNum">Q1</span>
+      <span class="q-category" id="qCat">Category</span>
+    </div>
+    <div class="q-text" id="qText"></div>
+    <div class="options-grid" id="optionsGrid"></div>
+    <div class="feedback-banner" id="feedbackBanner"></div>
+  </div>
+
+  <div class="nav-row">
+    <button class="btn-next" id="btnNext" onclick="nextQuestion()" disabled>Next ➜</button>
+  </div>
+</div>
+
+<!-- RESULT -->
+
+<div id="result" class="screen">
+  <div class="result-card">
+    <div class="result-emoji" id="resultEmoji">🏆</div>
+    <div class="result-name" id="resultName">Student</div>
+    <div class="result-sub">Class IV · Math · Fractions</div>
+
+```
+<div class="score-ring">
+  <svg width="140" height="140" viewBox="0 0 140 140">
+    <circle class="ring-bg" cx="70" cy="70" r="58"/>
+    <circle class="ring-fill" id="ringFill" cx="70" cy="70" r="58"
+            stroke-dasharray="364.4" stroke-dashoffset="364.4"/>
+  </svg>
+  <div class="score-center">
+    <div class="score-num" id="scoreNum">0</div>
+    <div class="score-denom">/ 20</div>
+  </div>
+</div>
+
+<div class="stat-row">
+  <div class="stat-box">
+    <div class="stat-icon">✅</div>
+    <div class="stat-val" id="statCorrect">0</div>
+    <div class="stat-lbl">Correct</div>
+  </div>
+  <div class="stat-box">
+    <div class="stat-icon">❌</div>
+    <div class="stat-val" id="statWrong">0</div>
+    <div class="stat-lbl">Wrong</div>
+  </div>
+  <div class="stat-box">
+    <div class="stat-icon">⏱️</div>
+    <div class="stat-val" id="statTime">—</div>
+    <div class="stat-lbl">Time Used</div>
+  </div>
+</div>
+
+<div class="grade-badge" id="gradeBadge"></div>
+
+<button class="btn-retry" onclick="retryQuiz()">🔄 Try Again</button>
+
+<div class="answers-breakdown" id="breakdown"></div>
+```
+
+  </div>
+</div>
+
+<div class="confetti-wrap" id="confetti"></div>
+
+<script>
+const QUESTIONS = [
+  {
+    cat: "Sum of Fractions",
+    q: "Find the sum: ½ + ⅗ + ¼",
+    opts: ["59/20", "61/20", "3/11", "1"],
+    ans: 0
+  },
+  {
+    cat: "Sum of Fractions",
+    q: "Find the sum: 8 + 13/9 + 2⅗",
+    opts: ["11 47/45", "12 17/45", "10 8/9", "11 8/45"],
+    ans: 0
+  },
+  {
+    cat: "Sum of Fractions",
+    q: "Find the sum: 3 9/10 + 4 6/10",
+    opts: ["7 5/10", "8 1/2", "8 5/10", "7 15/10"],
+    ans: 1
+  },
+  {
+    cat: "Difference of Fractions",
+    q: "Find the difference: 9/10 − 11/15",
+    opts: ["1/6", "3/30", "2/5", "1/30"],
+    ans: 0
+  },
+  {
+    cat: "Difference of Fractions",
+    q: "Find the difference: 5 7/2 − ½",
+    opts: ["8", "5 3/2", "7", "5 6/2"],
+    ans: 0
+  },
+  {
+    cat: "Difference of Fractions",
+    q: "Find the difference: 7 − 5 2/7",
+    opts: ["2 5/7", "1 5/7", "2 2/7", "1 2/7"],
+    ans: 1
+  },
+  {
+    cat: "Comparing Fractions",
+    q: "Compare: ¼ ☐ ⅜",
+    opts: ["¼ > ⅜", "¼ = ⅜", "¼ < ⅜", "Cannot compare"],
+    ans: 2
+  },
+  {
+    cat: "Comparing Fractions",
+    q: "Compare: 2 1/12 ☐ 25/24",
+    opts: ["2 1/12 < 25/24", "2 1/12 = 25/24", "2 1/12 > 25/24", "Cannot compare"],
+    ans: 2
+  },
+  {
+    cat: "Comparing Fractions",
+    q: "Compare: 8/6 ☐ 7/6",
+    opts: ["8/6 < 7/6", "8/6 = 7/6", "8/6 > 7/6", "Cannot compare"],
+    ans: 2
+  },
+  {
+    cat: "Ascending Order",
+    q: "Arrange in ascending order: ¾, ⅔, 1/16",
+    opts: ["1/16 < ⅔ < ¾", "⅔ < 1/16 < ¾", "¾ < ⅔ < 1/16", "1/16 < ¾ < ⅔"],
+    ans: 0
+  },
+  {
+    cat: "Ascending Order",
+    q: "Arrange in ascending order: 17/8, ⅔, 7/9",
+    opts: ["17/8 < ⅔ < 7/9", "⅔ < 7/9 < 17/8", "7/9 < ⅔ < 17/8", "⅔ < 17/8 < 7/9"],
+    ans: 1
+  },
+  {
+    cat: "Descending Order",
+    q: "Arrange in descending order: 4/3, 7/6, 8/12",
+    opts: ["4/3 > 7/6 > 8/12", "8/12 > 7/6 > 4/3", "7/6 > 4/3 > 8/12", "4/3 > 8/12 > 7/6"],
+    ans: 0
+  },
+  {
+    cat: "Descending Order",
+    q: "Arrange in descending order: 6/9, 4/7, 5/9",
+    opts: ["4/7 > 6/9 > 5/9", "6/9 > 5/9 > 4/7", "5/9 > 6/9 > 4/7", "6/9 > 4/7 > 5/9"],
+    ans: 1
+  },
+  {
+    cat: "Word Problem",
+    q: "A bird flies 21/2 km in the morning and 13/4 km in the evening. What is the total distance flown in one day?",
+    opts: ["13¼ km", "12¼ km", "11¾ km", "13¾ km"],
+    ans: 0
+  },
+  {
+    cat: "Word Problem",
+    q: "A bottle contains 7½ litres of juice. 3¼ litres is poured out. How much juice is left?",
+    opts: ["4¼ litres", "3¾ litres", "4½ litres", "4 litres"],
+    ans: 0
+  },
+  {
+    cat: "Equivalent Fractions",
+    q: "Which fraction is equivalent to ½?",
+    opts: ["3/5", "4/8", "3/7", "5/9"],
+    ans: 1
+  },
+  {
+    cat: "Simplest Form",
+    q: "Write 8/12 in its simplest form.",
+    opts: ["4/6", "2/3", "3/4", "1/2"],
+    ans: 1
+  },
+  {
+    cat: "Mixed Numbers",
+    q: "Convert 17/4 into a mixed number.",
+    opts: ["3¼", "4¼", "3¾", "4¾"],
+    ans: 1
+  },
+  {
+    cat: "Improper Fractions",
+    q: "Convert 3 2/5 into an improper fraction.",
+    opts: ["15/5", "17/5", "12/5", "16/5"],
+    ans: 1
+  },
+  {
+    cat: "Types of Fractions",
+    q: "Which of the following is a proper fraction?",
+    opts: ["9/7", "7/7", "5/9", "11/4"],
+    ans: 2
+  }
+];
+
+let currentQ = 0, score = 0, answered = false;
+let timerInterval, secondsLeft = 900, startSeconds = 900;
+let studentName = "";
+let userAnswers = [];
+
+function startQuiz() {
+  const name = document.getElementById("nameInput").value.trim();
+  if (!name) { alert("Please enter your name!"); return; }
+  studentName = name;
+  userAnswers = new Array(QUESTIONS.length).fill(-1);
+  currentQ = 0; score = 0;
+  showScreen("quiz");
+  document.getElementById("studentName").textContent = name;
+  secondsLeft = 900; startSeconds = 900;
+  startTimer();
+  renderQuestion();
+}
+
+function showScreen(id) {
+  document.querySelectorAll(".screen").forEach(s => s.classList.remove("active"));
+  document.getElementById(id).classList.add("active");
+}
+
+function startTimer() {
+  clearInterval(timerInterval);
+  timerInterval = setInterval(() => {
+    secondsLeft--;
+    const m = String(Math.floor(secondsLeft / 60)).padStart(2, "0");
+    const s = String(secondsLeft % 60).padStart(2, "0");
+    document.getElementById("timer").textContent = `${m}:${s}`;
+    const box = document.getElementById("timerBox");
+    if (secondsLeft <= 60) box.classList.add("warn"); else box.classList.remove("warn");
+    if (secondsLeft <= 0) { clearInterval(timerInterval); finishQuiz(); }
+  }, 1000);
+}
+
+function renderQuestion() {
+  const q = QUESTIONS[currentQ];
+  answered = false;
+  document.getElementById("qNum").textContent = `Q${currentQ + 1}`;
+  document.getElementById("qCat").textContent = q.cat;
+  document.getElementById("qText").textContent = q.q;
+  document.getElementById("qLabel").textContent = `Question ${currentQ + 1} of ${QUESTIONS.length}`;
+  document.getElementById("scoreLabel").textContent = `Score: ${score}`;
+  document.getElementById("progressFill").style.width = `${(currentQ / QUESTIONS.length) * 100}%`;
+  document.getElementById("btnNext").disabled = true;
+
+  const fb = document.getElementById("feedbackBanner");
+  fb.className = "feedback-banner";
+  fb.textContent = "";
+
+  const letters = ["A", "B", "C", "D"];
+  const grid = document.getElementById("optionsGrid");
+  grid.innerHTML = "";
+  q.opts.forEach((opt, i) => {
+    const btn = document.createElement("button");
+    btn.className = "opt-btn";
+    btn.innerHTML = `<span class="opt-letter">${letters[i]}</span>${opt}`;
+    btn.onclick = () => selectAnswer(i);
+    grid.appendChild(btn);
+  });
+}
+
+function selectAnswer(idx) {
+  if (answered) return;
+  answered = true;
+  userAnswers[currentQ] = idx;
+  const q = QUESTIONS[currentQ];
+  const btns = document.querySelectorAll(".opt-btn");
+  const fb = document.getElementById("feedbackBanner");
+
+  btns.forEach(b => b.disabled = true);
+  btns[q.ans].classList.add("correct");
+
+  if (idx === q.ans) {
+    score++;
+    fb.className = "feedback-banner correct-fb show";
+    fb.innerHTML = "✅ Correct! Well done!";
+  } else {
+    btns[idx].classList.add("wrong");
+    fb.className = "feedback-banner wrong-fb show";
+    fb.innerHTML = `❌ Incorrect. The correct answer was <strong>${q.opts[q.ans]}</strong>`;
+  }
+
+  document.getElementById("scoreLabel").textContent = `Score: ${score}`;
+  document.getElementById("btnNext").disabled = false;
+}
+
+function nextQuestion() {
+  if (!answered) return;
+  currentQ++;
+  if (currentQ >= QUESTIONS.length) { clearInterval(timerInterval); finishQuiz(); }
+  else renderQuestion();
+}
+
+function finishQuiz() {
+  showScreen("result");
+  const timeUsed = startSeconds - secondsLeft;
+  const tm = String(Math.floor(timeUsed / 60)).padStart(2, "0");
+  const ts = String(timeUsed % 60).padStart(2, "0");
+
+  document.getElementById("resultName").textContent = studentName;
+  document.getElementById("scoreNum").textContent = score;
+  document.getElementById("statCorrect").textContent = score;
+  document.getElementById("statWrong").textContent = QUESTIONS.length - score;
+  document.getElementById("statTime").textContent = `${tm}:${ts}`;
+
+  // Ring animation
+  const pct = score / QUESTIONS.length;
+  const circumference = 364.4;
+  setTimeout(() => {
+    document.getElementById("ringFill").style.strokeDashoffset = circumference * (1 - pct);
+    if (pct < 0.5) document.getElementById("ringFill").style.stroke = "#e63946";
+    else if (pct < 0.75) document.getElementById("ringFill").style.stroke = "#f4a261";
+    else document.getElementById("ringFill").style.stroke = "#2a9d8f";
+  }, 100);
+
+  // Emoji & grade
+  let emoji, grade, gradeClass;
+  if (score >= 18) { emoji = "🏆"; grade = "Grade A+ · Excellent!"; gradeClass = "grade-A"; }
+  else if (score >= 15) { emoji = "⭐"; grade = "Grade A · Very Good!"; gradeClass = "grade-A"; }
+  else if (score >= 12) { emoji = "👍"; grade = "Grade B · Good"; gradeClass = "grade-B"; }
+  else if (score >= 8) { emoji = "📚"; grade = "Grade C · Keep Practising"; gradeClass = "grade-C"; }
+  else { emoji = "💪"; grade = "Grade D · Needs Improvement"; gradeClass = "grade-D"; }
+
+  document.getElementById("resultEmoji").textContent = emoji;
+  const badge = document.getElementById("gradeBadge");
+  badge.textContent = grade;
+  badge.className = `grade-badge ${gradeClass}`;
+
+  // Breakdown
+  const bd = document.getElementById("breakdown");
+  bd.innerHTML = `<h3>📋 Answer Review</h3>`;
+  QUESTIONS.forEach((q, i) => {
+    const ua = userAnswers[i];
+    const correct = ua === q.ans;
+    const div = document.createElement("div");
+    div.className = `breakdown-item ${correct ? "correct" : "wrong"}`;
+    div.innerHTML = `<span class="bi-icon">${correct ? "✅" : "❌"}</span>
+      <div><strong>Q${i+1}:</strong> ${q.q}<br>
+      <span>Your answer: ${ua === -1 ? "Not answered" : q.opts[ua]}</span>${!correct ? ` · <strong>Correct: ${q.opts[q.ans]}</strong>` : ""}
+      </div>`;
+    bd.appendChild(div);
+  });
+
+  if (score >= 15) spawnConfetti();
+}
+
+function spawnConfetti() {
+  const colors = ["#e63946","#f4a261","#2a9d8f","#457b9d","#f1c40f","#a29bfe"];
+  const wrap = document.getElementById("confetti");
+  wrap.innerHTML = "";
+  for (let i = 0; i < 70; i++) {
+    const p = document.createElement("div");
+    p.className = "confetti-piece";
+    p.style.cssText = `
+      left:${Math.random()*100}vw;
+      background:${colors[Math.floor(Math.random()*colors.length)]};
+      width:${6+Math.random()*8}px;
+      height:${6+Math.random()*8}px;
+      animation-duration:${2+Math.random()*2.5}s;
+      animation-delay:${Math.random()*1.5}s;
+      border-radius:${Math.random()>0.5?'50%':'2px'};
+    `;
+    wrap.appendChild(p);
+    p.addEventListener("animationend", () => p.remove());
+  }
+}
+
+function retryQuiz() {
+  document.getElementById("nameInput").value = studentName;
+  showScreen("intro");
+  document.getElementById("confetti").innerHTML = "";
+}
+</script>
+
+</body>
+</html>
